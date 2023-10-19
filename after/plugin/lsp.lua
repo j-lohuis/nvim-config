@@ -6,7 +6,15 @@ local cmp = require('cmp')
 
 lsp.setup_nvim_cmp({
   mapping = cmp.mapping.preset.insert({
-    ['<C-Space>'] = cmp.mapping.complete()
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<CR>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Insert,
+      select = true
+    }),
+    ['<Tab>'] = cmp.mapping.confirm({
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true
+    })
   })
 })
 

@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='/root/.config/nvim/lua/cstd'
+let g:netrw_dirhist_0='/root/.config/nvim/lua'
+let g:netrw_dirhist_9='/root/.config/nvim'
+let g:netrw_dirhist_8='/root/.config/nvim/lua/cstd'
+let g:netrw_dirhist_7='/root/.config/nvim/lua'
+let g:netrw_dirhist_6='/root/.config/nvim'
+let g:netrw_dirhist_5='/root/.config/nvim/lua/cstd'
+let g:netrw_dirhist_4='/root/.config/nvim/lua'
+let g:netrw_dirhist_3='/root/.config/nvim'
+let g:netrw_dirhist_2='/root/.config/nvim/plugin'
