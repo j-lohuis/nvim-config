@@ -51,9 +51,10 @@ vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.opt.cursorline = true
+vim.o.colorcolumn = "80"
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 5
+vim.opt.scrolloff = 10
 
 vim.opt.wrap = false
 vim.g.netrw_banner = 0
@@ -213,7 +214,7 @@ require('lazy').setup {
   -- after the plugin has been loaded:
   --  config = function() ... end
 
-  { -- Useful plugin to show you pending keybinds.
+  {                     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VeryLazy', -- Sets the loading event to 'VeryLazy'
     config = function() -- This is the function that runs, AFTER loading
@@ -635,7 +636,7 @@ require('lazy').setup {
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
     'tomasiser/vim-code-dark',
-    lazy = false, -- make sure we load this during startup if it is your main colorscheme
+    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       -- Load the colorscheme here
@@ -653,13 +654,13 @@ require('lazy').setup {
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require('mini.surround').setup({
         mappings = {
-          add = '<leader>aa',
-          delete = '<leader>ad',
-          find = '<leader>af',
-          find_left = '<leader>aF',
-          highlight = '<leader>ah',
-          replace = '<leader>ar',
-          update_n_lines = '<leader>an',
+          add = '<leader>fa',
+          delete = '<leader>fd',
+          find = '<leader>ff',
+          find_left = '<leader>fF',
+          highlight = '<leader>fh',
+          replace = '<leader>fr',
+          update_n_lines = '<leader>fn',
         }
       })
 
@@ -675,6 +676,10 @@ require('lazy').setup {
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/nvim-treesitter-context',
+    },
     build = ':TSUpdate',
     config = function()
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -686,6 +691,33 @@ require('lazy').setup {
         auto_install = true,
         highlight = { enable = true },
         indent = { enable = true },
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
+            keymaps = {
+              -- You can use the capture groups defined in textobjects.scm
+              ['aa'] = '@parameter.outer',
+              ['ia'] = '@parameter.inner',
+            },
+          },
+          move = {
+            enable = false,
+          },
+          swap = {
+            enable = true,
+            swap_next = {
+              ['<leader>a'] = '@parameter.inner',
+            },
+            swap_previous = {
+              ['<leader>A'] = '@parameter.inner',
+            },
+          },
+        },
+      }
+      require('treesitter-context').setup {
+        enable = true,
+        max_lines = 5,
       }
 
       -- There are additional nvim-treesitter modules that you can use to interact
