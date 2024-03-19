@@ -51,12 +51,19 @@ vim.opt.inccommand = 'split'
 
 -- Show which line your cursor is on
 vim.opt.cursorline = true
-vim.o.colorcolumn = "80"
+vim.opt.colorcolumn = "80"
+
+-- 4 Spaces indent by default
+vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
+vim.opt.expandtab = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
 vim.opt.wrap = false
+
+vim.g.netrw_sort_sequence = '[\\/]$'
 vim.g.netrw_banner = 0
 
 -- [[ Basic Keymaps ]]
@@ -481,7 +488,6 @@ require('lazy').setup {
         clangd = {
           cmd = { "clangd", "--header-insertion=never" },
         },
-        pyright = {},
         lua_ls = {
           -- cmd = {...},
           -- filetypes { ...},
