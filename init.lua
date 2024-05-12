@@ -63,9 +63,6 @@ vim.opt.scrolloff = 10
 
 vim.opt.wrap = false
 
-vim.g.netrw_sort_sequence = '[\\/]$'
-vim.g.netrw_banner = 0
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -90,7 +87,7 @@ vim.keymap.set('n', '<leader>Y', '\"+Y')
 
 vim.keymap.set('i', '<C-c>', '<Nop>')
 
-vim.keymap.set('n', '<leader>e', vim.cmd.Ex)
+vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open Oil' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
@@ -736,6 +733,17 @@ require('lazy').setup {
   },
 
   'mbbill/undotree',
+
+  {
+    'stevearc/oil.nvim',
+    opts = {
+      default_file_explorer = true,
+      view_options = {
+        show_hidden = true,
+      }
+    },
+  },
+
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- put them in the right spots if you want.
