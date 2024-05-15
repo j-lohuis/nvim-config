@@ -145,6 +145,14 @@ vim.api.nvim_create_autocmd("TermOpen", {
   end
 })
 
+vim.api.nvim_create_user_command('WipeRegs', function ()
+  local regs = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+    'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '+', '/' }
+  for i = 1, #regs do
+    vim.fn.setreg(regs[i], {})
+  end
+  vim.cmd('wshada!')
+end, { nargs=0 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
