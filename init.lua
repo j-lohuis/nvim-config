@@ -664,6 +664,7 @@ require('lazy').setup {
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
+    lazy = false,
     config = function()
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -687,8 +688,9 @@ require('lazy').setup {
       --  and try some other statusline plugin
       require('mini.statusline').setup()
 
-      -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
+      require('mini.sessions').setup()
+
+      require('mini.starter').setup()
     end,
   },
 
