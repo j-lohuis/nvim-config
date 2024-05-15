@@ -145,6 +145,13 @@ vim.api.nvim_create_autocmd("TermOpen", {
   end
 })
 
+vim.api.nvim_create_user_command('MakeGS', function (tbl)
+  local session_path = vim.fn.stdpath('data') .. '/session/' .. tbl.fargs[1] .. '.vim'
+  print(session_path)
+  vim.cmd('mksession ' .. session_path)
+  print('Session saved as: ' .. session_path)
+end, { nargs=1 })
+
 vim.api.nvim_create_user_command('WipeRegs', function ()
   local regs = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
     'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '+', '/' }
@@ -646,12 +653,12 @@ require('lazy').setup {
     -- change the command in the config to whatever the name of that colorscheme is
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`
-    'tomasiser/vim-code-dark',
+    'Mofiqul/vscode.nvim',
     lazy = false,    -- make sure we load this during startup if it is your main colorscheme
     priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       -- Load the colorscheme here
-      vim.cmd.colorscheme 'codedark'
+      vim.cmd.colorscheme 'vscode'
     end,
   },
 
