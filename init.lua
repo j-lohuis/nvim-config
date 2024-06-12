@@ -709,8 +709,11 @@ require('lazy').setup {
         ensure_installed = { 'bash', 'c', 'cpp', 'lua', 'vim', 'vimdoc' },
         -- Autoinstall languages that are not installed
         auto_install = true,
-        highlight = { enable = true },
-        indent = { enable = true },
+        highlight = {
+          enable = true,
+          disable = { "latex", "tex" },
+        },
+        indent = { enable = false },
         textobjects = {
           select = {
             enable = true,
@@ -760,6 +763,15 @@ require('lazy').setup {
       }
     },
   },
+
+  {
+    "lervag/vimtex",
+    lazy = false, -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      -- VimTeX configuration goes here
+    end
+  }
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
