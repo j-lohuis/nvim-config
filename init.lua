@@ -84,6 +84,7 @@ vim.keymap.set('v', 'K', ':m \'<-2<CR>gv=gv')
 vim.keymap.set('n', '<leader>y', '\"+y')
 vim.keymap.set('v', '<leader>y', '\"+y')
 vim.keymap.set('n', '<leader>Y', '\"+Y')
+vim.keymap.set('n', ',y', ':%y+<CR>')
 
 vim.keymap.set('i', '<C-c>', '<Nop>')
 
@@ -666,11 +667,11 @@ require('lazy').setup {
     'echasnovski/mini.nvim',
     lazy = false,
     config = function()
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
-      -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
-      -- - sd'   - [S]urround [D]elete [']quotes
-      -- - sr)'  - [S]urround [R]eplace [)] [']
+
+      require('mini.ai').setup();
+
+      require('mini.align').setup();
+
       require('mini.surround').setup({
         mappings = {
           add = '<leader>fa',
@@ -755,13 +756,28 @@ require('lazy').setup {
   'mbbill/undotree',
 
   {
-    'stevearc/oil.nvim',
-    opts = {
-      default_file_explorer = true,
-      view_options = {
-        show_hidden = true,
+    "stevearc/oil.nvim",
+    config = function()
+      require("oil").setup {
+        columns = { "icon" },
+        keymaps = {
+          ["<C-h>"] = false,
+          ["<C-l>"] = false,
+          ["<C-k>"] = false,
+          ["<C-j>"] = false,
+          ["<M-h>"] = "actions.select_split",
+        },
+        view_options = {
+          show_hidden = true,
+        },
       }
-    },
+
+      -- Open parent directory in current window
+      vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
+      -- Open parent directory in floating window
+      vim.keymap.set("n", "<space>-", require("oil").toggle_float)
+    end,
   },
 
   {
