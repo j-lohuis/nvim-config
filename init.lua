@@ -75,10 +75,6 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('x', '<leader>p', [["_dP]])
 -- Undotree
 vim.keymap.set('n', '<leader>u', vim.cmd.UndotreeToggle)
---
--- Move selection Up/Down
-vim.keymap.set('v', 'J', ':m \'>+1<CR>gv=gv')
-vim.keymap.set('v', 'K', ':m \'<-2<CR>gv=gv')
 
 -- Remaps for interaction with system clipboard
 vim.keymap.set('n', '<leader>y', '\"+y')
@@ -560,7 +556,7 @@ require('lazy').setup({
       -- end
       local servers = {
         clangd = {
-          cmd = { "clangd", "--header-insertion=never", "--background-index", "-j", "8" },
+          cmd = { "clangd", "--header-insertion=never", "--completion-style=detailed", "--log=verbose" },
         },
         rust_analyzer = {
           settings = {
@@ -738,6 +734,10 @@ require('lazy').setup({
 
       require('mini.align').setup();
 
+      require('mini.move').setup();
+
+      require('mini.operators').setup();
+
       require('mini.surround').setup({
         mappings = {
           add = '<leader>fa',
@@ -853,16 +853,16 @@ require('lazy').setup({
       "nvim-telescope/telescope.nvim", -- optional
     },
     config = true
-  }
+  },
 
-  -- {
-  --   "lervag/vimtex",
-  --   lazy = false, -- we don't want to lazy load VimTeX
-  --   -- tag = "v2.15", -- uncomment to pin to a specific release
-  --   init = function()
-  --     -- VimTeX configuration goes here
-  --   end
-  -- }
+  {
+    "lervag/vimtex",
+    lazy = false, -- we don't want to lazy load VimTeX
+    -- tag = "v2.15", -- uncomment to pin to a specific release
+    init = function()
+      -- VimTeX configuration goes here
+    end
+  },
 
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
