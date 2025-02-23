@@ -4,11 +4,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Load configuration files
-require("plugin.options")
-require("plugin.keymaps")
-require("plugin.autocommands")
-
 -- Bootstrap lazy.nvim if needed
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
