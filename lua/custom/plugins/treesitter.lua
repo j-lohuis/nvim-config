@@ -2,7 +2,10 @@ return {
   'nvim-treesitter/nvim-treesitter',
   dependencies = {
     'nvim-treesitter/nvim-treesitter-textobjects',
-    'nvim-treesitter/nvim-treesitter-context',
+    {
+      'nvim-treesitter/nvim-treesitter-context',
+      opts = { enable = false }, -- Disable until 0.11 compatibility is fixed
+    },
   },
   build = ':TSUpdate',
   config = function()
@@ -31,6 +34,7 @@ return {
         },
       },
     }
-    require('treesitter-context').setup { enable = true, max_lines = 5 }
+    -- Treesitter-context disabled due to 0.11 compatibility issues
+    -- require('treesitter-context').setup { enable = true, max_lines = 5 }
   end,
 }
