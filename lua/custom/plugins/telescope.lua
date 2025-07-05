@@ -13,6 +13,79 @@ return {
   },
   config = function()
     require('telescope').setup {
+      defaults = {
+        -- Window layout: bottom 3/8 of screen
+        layout_strategy = 'bottom_pane',
+        layout_config = {
+          bottom_pane = {
+            height = 0.375, -- 3/8 of screen height
+            preview_cutoff = 120,
+          },
+        },
+        
+        -- Remove rounded borders
+        borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
+        
+        -- Safe preview settings
+        preview = {
+          filesize_limit = 0.5, -- 0.5 MB limit
+          timeout = 250,
+          treesitter = false, -- Disable treesitter in preview for performance
+        },
+        
+        -- Use safe file previewer
+        file_previewer = require('telescope.previewers').vim_buffer_cat.new,
+        grep_previewer = require('telescope.previewers').vim_buffer_vimgrep.new,
+        qflist_previewer = require('telescope.previewers').vim_buffer_qflist.new,
+        
+        -- Performance optimizations and safety
+        file_ignore_patterns = {
+          "%.git/",
+          "node_modules/",
+          "%.cache/",
+          "%.tmp/",
+          "%.DS_Store$",
+          -- Binary files
+          "%.o$", "%.a$", "%.out$", "%.class$", "%.pyc$",
+          "%.so$", "%.dll$", "%.exe$", "%.bin$",
+          -- Archives
+          "%.pdf$", "%.zip$", "%.tar$", "%.tar%.gz$", "%.rar$", "%.7z$",
+          "%.gz$", "%.bz2$", "%.xz$",
+          -- Media files
+          "%.mkv$", "%.mp4$", "%.avi$", "%.mov$", "%.wmv$",
+          "%.mp3$", "%.wav$", "%.flac$", "%.ogg$",
+          "%.jpg$", "%.jpeg$", "%.png$", "%.gif$", "%.bmp$",
+          "%.svg$", "%.ico$", "%.tiff$", "%.psd$", "%.webp$",
+          -- Large data files
+          "%.db$", "%.sqlite$", "%.sqlite3$",
+          "%.log$", "%.logs$"
+        },
+        
+        
+        -- Reduce entry display for performance
+        results_title = false,
+        sorting_strategy = 'ascending',
+        scroll_strategy = 'limit',
+      },
+      
+      pickers = {
+        find_files = {
+          hidden = true,
+          follow = true,
+        },
+        live_grep = {
+          disable_coordinates = true,
+        },
+        buffers = {
+          previewer = false, -- Disable preview for buffers
+          mappings = {
+            i = {
+              ['<c-d>'] = require('telescope.actions').delete_buffer,
+            },
+          },
+        },
+      },
+      
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
