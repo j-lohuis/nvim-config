@@ -1,68 +1,3 @@
---- Parses a command-line string the way Bash does into an array of arguments.
---- It handles single quotes, double quotes, and backslash escapes.
---- @param str string: the command-line string to parse.
---- @return table: an array of argument strings.
-local function shell_split(str)
-  local words = {}       -- holds the final tokens
-  local current = {}     -- holds the characters of the current token
-  local in_single = false   -- are we inside a single-quoted string?
-  local in_double = false   -- are we inside a double-quoted string?
-  local escape = false      -- did we see a backslash?
-
-  for i = 1, #str do
-    local c = str:sub(i, i)
-    if escape then
-      -- When an escape is active, add the character literally
-      table.insert(current, c)
-      escape = false
-    elseif c == "\\" then
-      -- In single quotes, backslashes are literal.
-      if in_single then
-        table.insert(current, c)
-      else
-        escape = true
-      end
-    elseif c == "'" then
-      if not in_double then
-        -- Toggle single-quote state if not inside double quotes.
-        in_single = not in_single
-      else
-        -- Inside double quotes, single quotes are literal.
-        table.insert(current, c)
-      end
-    elseif c == '"' then
-      if not in_single then
-        -- Toggle double-quote state if not inside single quotes.
-        in_double = not in_double
-      else
-        -- Inside single quotes, double quotes are literal.
-        table.insert(current, c)
-      end
-    elseif c:match("%s") then
-      if not in_single and not in_double then
-        -- Outside any quotes, whitespace ends the current token.
-        if #current > 0 then
-          table.insert(words, table.concat(current))
-          current = {}
-        end
-        -- (Do not insert an empty token for multiple spaces)
-      else
-        -- Inside quotes, preserve whitespace.
-        table.insert(current, c)
-      end
-    else
-      table.insert(current, c)
-    end
-  end
-
-  -- If there's any token left at the end, add it.
-  if #current > 0 then
-    table.insert(words, table.concat(current))
-  end
-
-  return words
-end
-
 return {
   {
     "mfussenegger/nvim-dap",
@@ -73,109 +8,387 @@ return {
       "williamboman/mason.nvim",
     },
     config = function()
-      local dap = require "dap"
-      local ui = require "dapui"
+      local dap = require("dap")
+      local dapui = require("dapui")
 
-      require("dapui").setup()
-
-      require("nvim-dap-virtual-text").setup({})
-
-      dap.adapters.cppdbg = {
-        id = 'cppdbg',
-        type = 'executable',
-        command = '/home/julo/tools/vscode-cpptools/extension/debugAdapters/bin/OpenDebugAD7',
-      }
-
-      local dap_config = {
-        {
-          name = "Launch file",
-          type = "cppdbg",
-          request = "launch",
-          program = function()
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-          end,
-          cwd = '${workspaceFolder}',
-          stopAtEntry = true,
-          setupCommands = {
-            {
-              text = '-enable-pretty-printing',
-              description =  'enable pretty printing',
-              ignoreFailures = false
+      -- Setup DAP UI with enhanced configuration
+      dapui.setup({
+        icons = { expanded = "▾", collapsed = "▸", current_frame = "▸" },
+        mappings = {
+          expand = { "<CR>", "<2-LeftMouse>" },
+          open = "o",
+          remove = "d",
+          edit = "e",
+          repl = "r",
+          toggle = "t",
+        },
+        element_mappings = {},
+        expand_lines = vim.fn.has("nvim-0.7") == 1,
+        layouts = {
+          {
+            elements = {
+              { id = "scopes", size = 0.25 },
+              "breakpoints",
+              "stacks",
+              "watches",
             },
+            size = 40,
+            position = "left",
+          },
+          {
+            elements = {
+              "repl",
+              "console",
+            },
+            size = 0.25,
+            position = "bottom",
           },
         },
+        controls = {
+          enabled = true,
+          element = "repl",
+          icons = {
+            pause = "",
+            play = "",
+            step_into = "",
+            step_over = "",
+            step_out = "",
+            step_back = "",
+            run_last = "↻",
+            terminate = "⏹",
+          },
+        },
+        floating = {
+          max_height = nil,
+          max_width = nil,
+          border = "single",
+          mappings = {
+            close = { "q", "<Esc>" },
+          },
+        },
+        windows = { indent = 1 },
+        render = {
+          max_type_length = nil,
+          max_value_lines = 100,
+        }
+      })
+
+      -- Setup virtual text with better formatting
+      require("nvim-dap-virtual-text").setup({
+        enabled = true,
+        enabled_commands = true,
+        highlight_changed_variables = true,
+        highlight_new_as_changed = false,
+        show_stop_reason = true,
+        commented = false,
+        only_first_definition = true,
+        all_references = false,
+        clear_on_continue = false,
+        display_callback = function(variable, buf, stackframe, node, options)
+          if options.virt_text_pos == 'inline' then
+            return ' = ' .. variable.value
+          else
+            return variable.name .. ' = ' .. variable.value
+          end
+        end,
+        virt_text_pos = vim.fn.has 'nvim-0.10' == 1 and 'inline' or 'eol',
+        all_frames = false,
+        virt_lines = false,
+        virt_text_win_col = nil
+      })
+
+      -- CodeLLDB Adapter Configuration with system fallback
+      dap.adapters.codelldb = function(on_adapter)
+        local codelldb_path = nil
+        
+        -- First, try system codelldb
+        if vim.fn.executable("codelldb") == 1 then
+          codelldb_path = "codelldb"
+        else
+          -- Fallback to Mason's codelldb
+          local mason_registry = require("mason-registry")
+          if mason_registry.is_installed("codelldb") then
+            local codelldb_package = mason_registry.get_package("codelldb")
+            local install_root_dir = codelldb_package:get_install_path()
+            local mason_codelldb_path = install_root_dir .. "/extension/adapter/codelldb"
+            
+            if vim.fn.executable(mason_codelldb_path) == 1 then
+              codelldb_path = mason_codelldb_path
+            end
+          end
+        end
+        
+        if not codelldb_path then
+          vim.notify("CodeLLDB not found. Install system codelldb or install via Mason (:Mason)", vim.log.levels.ERROR)
+          return
+        end
+
+        on_adapter({
+          type = "server",
+          port = "${port}",
+          executable = {
+            command = codelldb_path,
+            args = { "--port", "${port}" },
+          }
+        })
+      end
+
+      -- Enhanced C/C++ Configuration
+      dap.configurations.c = {
         {
-          name = "Launch file args",
-          type = "cppdbg",
+          name = "Launch",
+          type = "codelldb",
           request = "launch",
           program = function()
             return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
           end,
           cwd = '${workspaceFolder}',
-          stopAtEntry = true,
+          stopOnEntry = false,
+          args = {},
+          runInTerminal = false,
+        },
+        {
+          name = "Launch with arguments",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
           args = function()
-            local args = vim.fn.input('Arguments: ', '')
-            return shell_split(args)
+            local args_string = vim.fn.input('Arguments: ')
+            return vim.split(args_string, " ")
           end,
-          setupCommands = {
-            {
-              text = '-enable-pretty-printing',
-              description =  'enable pretty printing',
-              ignoreFailures = false
-            },
-          },
+          runInTerminal = false,
         },
         {
-          name = 'Attach to gdbserver :1234',
-          type = 'cppdbg',
-          request = 'launch',
-          MIMode = 'gdb',
-          miDebuggerServerAddress = 'localhost:1234',
-          miDebuggerPath = '/usr/bin/gdb',
-          cwd = '${workspaceFolder}',
-          program = function()
-            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          name = "Attach to process",
+          type = "codelldb",
+          request = "attach",
+          pid = function()
+            local handle = io.popen('ps -ax | grep -v grep')
+            local result = handle:read('*a')
+            handle:close()
+            return vim.fn.input('PID: ', '', 'custom,' .. result)
           end,
-          setupCommands = {
-            {
-              text = '-enable-pretty-printing',
-              description =  'enable pretty printing',
-              ignoreFailures = false
-            },
-          },
+          args = {},
         },
       }
-      dap.configurations.c = dap_config;
-      dap.configurations.cpp = dap_config;
-      dap.configurations.rust = dap_config;
 
-      vim.keymap.set("n", "<space>b", dap.toggle_breakpoint)
-      vim.keymap.set("n", "<space>gb", dap.run_to_cursor)
+      -- Copy C config to C++
+      dap.configurations.cpp = dap.configurations.c
 
-      -- Eval var under cursor
+      -- Enhanced Rust Configuration with Cargo integration
+      dap.configurations.rust = {
+        {
+          name = "Launch (Cargo)",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            -- Try to find the target binary automatically
+            local cargo_metadata = vim.fn.system('cargo metadata --format-version 1 --no-deps')
+            if vim.v.shell_error == 0 then
+              local metadata = vim.fn.json_decode(cargo_metadata)
+              if metadata and metadata.target_directory then
+                local target_dir = metadata.target_directory .. "/debug/"
+                return vim.fn.input('Path to executable: ', target_dir, 'file')
+              end
+            end
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = {},
+          runInTerminal = false,
+          cargo = {
+            args = { "build" },
+            filter = {
+              name = "rust-analyzer",
+              kind = "bin"
+            }
+          }
+        },
+        {
+          name = "Launch (Cargo with args)",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            local cargo_metadata = vim.fn.system('cargo metadata --format-version 1 --no-deps')
+            if vim.v.shell_error == 0 then
+              local metadata = vim.fn.json_decode(cargo_metadata)
+              if metadata and metadata.target_directory then
+                local target_dir = metadata.target_directory .. "/debug/"
+                return vim.fn.input('Path to executable: ', target_dir, 'file')
+              end
+            end
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = function()
+            local args_string = vim.fn.input('Arguments: ')
+            return vim.split(args_string, " ")
+          end,
+          runInTerminal = false,
+          cargo = {
+            args = { "build" },
+            filter = {
+              name = "rust-analyzer",
+              kind = "bin"
+            }
+          }
+        },
+        {
+          name = "Launch (Release)",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            local cargo_metadata = vim.fn.system('cargo metadata --format-version 1 --no-deps')
+            if vim.v.shell_error == 0 then
+              local metadata = vim.fn.json_decode(cargo_metadata)
+              if metadata and metadata.target_directory then
+                local target_dir = metadata.target_directory .. "/release/"
+                return vim.fn.input('Path to executable: ', target_dir, 'file')
+              end
+            end
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/release/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = {},
+          runInTerminal = false,
+          cargo = {
+            args = { "build", "--release" },
+            filter = {
+              name = "rust-analyzer",
+              kind = "bin"
+            }
+          }
+        },
+        {
+          name = "Launch tests",
+          type = "codelldb",
+          request = "launch",
+          program = function()
+            return vim.fn.input('Path to test executable: ', vim.fn.getcwd() .. '/target/debug/deps/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = {},
+          runInTerminal = false,
+          cargo = {
+            args = { "test", "--no-run" },
+            filter = {
+              name = "rust-analyzer",
+              kind = "bin"
+            }
+          }
+        },
+      }
+
+      -- VSCode-style keybindings
+      vim.keymap.set("n", "<F5>", function()
+        if dap.session() then
+          dap.continue()
+        else
+          dap.continue()
+        end
+      end, { desc = "Debug: Start/Continue" })
+
+      vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debug: Step Over" })
+      vim.keymap.set("n", "<F11>", dap.step_into, { desc = "Debug: Step Into" })
+      vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debug: Step Out" })
+      vim.keymap.set("n", "<S-F5>", dap.restart, { desc = "Debug: Restart" })
+      vim.keymap.set("n", "<C-F5>", dap.terminate, { desc = "Debug: Stop" })
+
+      -- Additional debug shortcuts
+      vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+      vim.keymap.set("n", "<leader>dB", function()
+        dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
+      end, { desc = "Debug: Conditional Breakpoint" })
+      vim.keymap.set("n", "<leader>dp", function()
+        dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))
+      end, { desc = "Debug: Log Point" })
+      vim.keymap.set("n", "<leader>dr", dap.repl.open, { desc = "Debug: Open REPL" })
+      vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "Debug: Run Last" })
+
+      -- Rust-specific shortcuts
+      vim.keymap.set("n", "<leader>drc", function()
+        vim.fn.system('cargo build')
+        dap.continue()
+      end, { desc = "Debug: Cargo Build & Launch" })
+      vim.keymap.set("n", "<leader>drt", function()
+        vim.fn.system('cargo test --no-run')
+        dap.continue()
+      end, { desc = "Debug: Cargo Test Build & Launch" })
+
+      -- Evaluation and UI
+      vim.keymap.set({"n", "v"}, "<leader>dh", function()
+        dapui.eval(nil, { enter = true })
+      end, { desc = "Debug: Evaluate" })
+      vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "Debug: Toggle UI" })
+
+      -- Maintain legacy shortcuts for muscle memory
+      vim.keymap.set("n", "<space>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+      vim.keymap.set("n", "<space>gb", dap.run_to_cursor, { desc = "Debug: Run to Cursor" })
       vim.keymap.set("n", "<space>?", function()
-        require("dapui").eval(nil, { enter = true })
-      end)
+        dapui.eval(nil, { enter = true })
+      end, { desc = "Debug: Evaluate" })
 
-      vim.keymap.set("n", "<F1>", dap.continue)
-      vim.keymap.set("n", "<F2>", dap.step_into)
-      vim.keymap.set("n", "<F3>", dap.step_over)
-      vim.keymap.set("n", "<F4>", dap.step_out)
-      vim.keymap.set("n", "<F5>", dap.step_back)
-      vim.keymap.set("n", "<F13>", dap.restart)
+      -- Automatic UI management
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
 
-      dap.listeners.before.attach.dapui_config = function()
-        ui.open()
-      end
-      dap.listeners.before.launch.dapui_config = function()
-        ui.open()
-      end
-      dap.listeners.before.event_terminated.dapui_config = function()
-        ui.close()
-      end
-      dap.listeners.before.event_exited.dapui_config = function()
-        ui.close()
-      end
+      -- Auto-highlight current line
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "*",
+        desc = "prevent colorscheme clears self-defined DAP icon colors.",
+        callback = function()
+          vim.api.nvim_set_hl(0, 'DapBreakpoint', { ctermbg = 0, fg = '#993939', bg = '#31353f' })
+          vim.api.nvim_set_hl(0, 'DapLogPoint', { ctermbg = 0, fg = '#61afef', bg = '#31353f' })
+          vim.api.nvim_set_hl(0, 'DapStopped', { ctermbg = 0, fg = '#98c379', bg = '#31353f' })
+        end,
+      })
+
+      -- Define breakpoint signs
+      vim.fn.sign_define('DapBreakpoint', {
+        text = '●',
+        texthl = 'DapBreakpoint',
+        linehl = 'DapBreakpoint',
+        numhl = 'DapBreakpoint'
+      })
+      vim.fn.sign_define('DapBreakpointCondition', {
+        text = '◆',
+        texthl = 'DapBreakpoint',
+        linehl = 'DapBreakpoint',
+        numhl = 'DapBreakpoint'
+      })
+      vim.fn.sign_define('DapBreakpointRejected', {
+        text = '○',
+        texthl = 'DapBreakpoint',
+        linehl = 'DapBreakpoint',
+        numhl = 'DapBreakpoint'
+      })
+      vim.fn.sign_define('DapLogPoint', {
+        text = '◉',
+        texthl = 'DapLogPoint',
+        linehl = 'DapLogPoint',
+        numhl = 'DapLogPoint'
+      })
+      vim.fn.sign_define('DapStopped', {
+        text = '▶',
+        texthl = 'DapStopped',
+        linehl = 'DapStopped',
+        numhl = 'DapStopped'
+      })
     end,
   },
 }
