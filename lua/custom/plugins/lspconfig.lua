@@ -1,7 +1,7 @@
 return {
   'neovim/nvim-lspconfig',
   dependencies = {
-    { 'williamboman/mason.nvim', config = { PATH = "append" } },
+    { 'williamboman/mason.nvim', opts = { PATH = "append" } },
     'williamboman/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
     { 'j-hui/fidget.nvim', opts = {} },
@@ -121,14 +121,14 @@ return {
     }
 
     require('mason').setup()
-    
+
     -- Conditional installation - only install what's not available system-wide
     local ensure_installed = {}
-    
+
     -- Always install lua_ls and stylua via Mason (system versions often problematic)
     table.insert(ensure_installed, 'lua-language-server')
     table.insert(ensure_installed, 'stylua')
-    
+
     -- Only install language servers if not available system-wide
     if not is_executable("clangd") then
       table.insert(ensure_installed, 'clangd')
@@ -136,10 +136,10 @@ return {
     if not is_executable("rust-analyzer") then
       table.insert(ensure_installed, 'rust-analyzer')
     end
-    
+
     -- Always install codelldb via Mason (system versions rarely work well)
     table.insert(ensure_installed, 'codelldb')
-    
+
     require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
     -- Setup LSP servers with hybrid approach
@@ -149,14 +149,14 @@ return {
         filetypes = server_config.filetypes,
         capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_config.capabilities or {}),
       }
-      
+
       -- Set command if it's a function (system/Mason detection)
       if type(server_config.cmd) == "function" then
         config.cmd = server_config.cmd()
       elseif server_config.cmd then
         config.cmd = server_config.cmd
       end
-      
+
       require('lspconfig')[server_name].setup(config)
     end
 
@@ -168,7 +168,7 @@ return {
           if servers[server_name] then
             return
           end
-          
+
           -- Auto-setup any other Mason-installed servers
           require('lspconfig')[server_name].setup {
             capabilities = capabilities,

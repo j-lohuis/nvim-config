@@ -22,22 +22,22 @@ return {
             preview_cutoff = 120,
           },
         },
-        
+
         -- Remove rounded borders
         borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
-        
+
         -- Safe preview settings
         preview = {
           filesize_limit = 0.5, -- 0.5 MB limit
           timeout = 250,
           treesitter = false, -- Disable treesitter in preview for performance
         },
-        
+
         -- Use safe file previewer
         file_previewer = require('telescope.previewers').vim_buffer_cat.new,
         grep_previewer = require('telescope.previewers').vim_buffer_vimgrep.new,
         qflist_previewer = require('telescope.previewers').vim_buffer_qflist.new,
-        
+
         -- Performance optimizations and safety
         file_ignore_patterns = {
           "%.git/",
@@ -60,14 +60,14 @@ return {
           "%.db$", "%.sqlite$", "%.sqlite3$",
           "%.log$", "%.logs$"
         },
-        
-        
+
+
         -- Reduce entry display for performance
         results_title = false,
         sorting_strategy = 'ascending',
         scroll_strategy = 'limit',
       },
-      
+
       pickers = {
         find_files = {
           hidden = true,
@@ -85,7 +85,7 @@ return {
           },
         },
       },
-      
+
       extensions = {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),

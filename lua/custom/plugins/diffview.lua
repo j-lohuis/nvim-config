@@ -3,7 +3,7 @@ return {
   dependencies = { 'nvim-lua/plenary.nvim' },
   config = function()
     local actions = require('diffview.actions')
-    
+
     require('diffview').setup({
       diff_binaries = false,
       enhanced_diff_hl = true,
@@ -12,18 +12,18 @@ return {
       use_icons = true,
       show_help_hints = true,
       watch_index = true,
-      
+
       icons = {
         folder_closed = '',
         folder_open = '',
       },
-      
+
       signs = {
         fold_closed = '',
         fold_open = '',
         done = '✓',
       },
-      
+
       view = {
         default = {
           layout = 'diff2_horizontal',
@@ -38,7 +38,7 @@ return {
           disable_diagnostics = true,
         },
       },
-      
+
       file_panel = {
         listing_style = 'tree',
         tree_options = {
@@ -51,7 +51,7 @@ return {
           win_opts = {}
         },
       },
-      
+
       file_history_panel = {
         log_options = {
           git = {
@@ -69,7 +69,7 @@ return {
           win_opts = {}
         },
       },
-      
+
       commit_log_panel = {
         win_config = {
           position = 'bottom',
@@ -77,12 +77,12 @@ return {
           win_opts = {}
         }
       },
-      
+
       default_args = {
         DiffviewOpen = {},
         DiffviewFileHistory = {},
       },
-      
+
       hooks = {
         diff_buf_read = function(bufnr)
           vim.opt_local.wrap = false
@@ -109,7 +109,7 @@ return {
           end
         end,
       },
-      
+
       keymaps = {
         disable_defaults = false,
         view = {
@@ -123,17 +123,17 @@ return {
           ['<leader>cb']   = actions.conflict_choose('base'),   -- Accept base
           ['<leader>ca']   = actions.conflict_choose('all'),    -- Accept all
           ['<leader>cn']   = actions.conflict_choose('none'),   -- Accept none
-          
+
           -- Navigation
           [']c']           = actions.next_conflict,             -- Next conflict
           ['[c']           = actions.prev_conflict,             -- Previous conflict
-          
+
           -- Standard diff operations
           ['do']           = actions.diffget('ours'),
           ['dp']           = actions.diffput('ours'),
           ['dO']           = actions.diffget('theirs'),
           ['dP']           = actions.diffput('theirs'),
-          
+
           -- View controls
           ['<tab>']        = actions.select_next_entry,
           ['<s-tab>']      = actions.select_prev_entry,
@@ -146,23 +146,23 @@ return {
           ['[x]']          = actions.prev_conflict,
           [']x']           = actions.next_conflict,
         },
-        
+
         diff1 = {
           ['g?'] = actions.help('view'),
         },
-        
+
         diff2 = {
           ['g?'] = actions.help('view'),
         },
-        
+
         diff3 = {
           ['g?'] = actions.help('view'),
         },
-        
+
         diff4 = {
           ['g?'] = actions.help('view'),
         },
-        
+
         file_panel = {
           ['j']             = actions.next_entry,
           ['<down>']        = actions.next_entry,
@@ -187,31 +187,31 @@ return {
           ['g<C-x>']        = actions.cycle_layout,
           ['g?']            = actions.help('file_panel'),
         },
-        
+
         file_history_panel = {
           ['g!']            = actions.options,
           ['<C-A-d>']       = actions.open_in_diffview,
           ['g?']            = actions.help('file_history_panel'),
         },
-        
+
         option_panel = {
           ['<tab>']         = actions.select_entry,
           ['q']             = actions.close,
         },
-        
+
         help_panel = {
           ['q']             = actions.close,
         },
       },
     })
-    
+
     -- Global keymaps for diffview
     vim.keymap.set('n', '<leader>do', '<cmd>DiffviewOpen<cr>', { desc = 'Open diffview' })
     vim.keymap.set('n', '<leader>dc', '<cmd>DiffviewClose<cr>', { desc = 'Close diffview' })
     vim.keymap.set('n', '<leader>dr', '<cmd>DiffviewRefresh<cr>', { desc = 'Refresh diffview' })
     vim.keymap.set('n', '<leader>dh', '<cmd>DiffviewFileHistory<cr>', { desc = 'File history' })
     vim.keymap.set('n', '<leader>dm', '<cmd>DiffviewOpen HEAD~1<cr>', { desc = 'Diff with previous commit' })
-    
+
     -- Merge resolution specific commands
     vim.keymap.set('n', '<leader>mr', '<cmd>DiffviewOpen<cr>', { desc = 'Open merge resolution' })
     vim.keymap.set('n', '<leader>mc', '<cmd>DiffviewClose<cr>', { desc = 'Close merge resolution' })

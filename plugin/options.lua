@@ -1,5 +1,3 @@
--- ~/.config/nvim/lua/config/options.lua
-
 -- Line numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -23,7 +21,7 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣', eol = '\\u21b5' }
 
 vim.opt.inccommand = 'split'
 vim.opt.cursorline = true
-vim.opt.colorcolumn = "80"
+vim.opt.colorcolumn = "100"
 
 -- Indentation options (4 spaces)
 vim.opt.shiftwidth = 4

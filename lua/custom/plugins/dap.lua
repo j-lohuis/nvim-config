@@ -100,7 +100,7 @@ return {
       -- CodeLLDB Adapter Configuration with system fallback
       dap.adapters.codelldb = function(on_adapter)
         local codelldb_path = nil
-        
+
         -- First, try system codelldb
         if vim.fn.executable("codelldb") == 1 then
           codelldb_path = "codelldb"
@@ -111,13 +111,13 @@ return {
             local codelldb_package = mason_registry.get_package("codelldb")
             local install_root_dir = codelldb_package:get_install_path()
             local mason_codelldb_path = install_root_dir .. "/extension/adapter/codelldb"
-            
+
             if vim.fn.executable(mason_codelldb_path) == 1 then
               codelldb_path = mason_codelldb_path
             end
           end
         end
-        
+
         if not codelldb_path then
           vim.notify("CodeLLDB not found. Install system codelldb or install via Mason (:Mason)", vim.log.levels.ERROR)
           return
