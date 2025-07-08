@@ -10,7 +10,14 @@ return {
     },
 
     sources = {
-      default = { 'lsp', 'path', 'snippets' },
+      default = { 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        cmdline = {
+          enabled = function()
+            return vim.fn.getcmdtype() ~= ':' or not vim.fn.getcmdline():match("^[%%0-9,'<>%-]*!")
+          end
+        }
+      }
     },
 
     snippets = {

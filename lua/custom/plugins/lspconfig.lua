@@ -118,6 +118,10 @@ return {
           },
         },
       },
+      pyright = {
+        settings = {}
+      },
+      ts_ls = {}
     }
 
     require('mason').setup()
@@ -162,6 +166,7 @@ return {
 
     -- Still use mason-lspconfig for any additional servers Mason installs
     require('mason-lspconfig').setup {
+      automatic_enable = false,
       handlers = {
         function(server_name)
           -- Skip servers we've already configured above
