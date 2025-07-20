@@ -11,13 +11,6 @@ return {
 
     sources = {
       default = { 'lsp', 'path', 'snippets', 'buffer' },
-      providers = {
-        cmdline = {
-          enabled = function()
-            return vim.fn.getcmdtype() ~= ':' or not vim.fn.getcmdline():match("^[%%0-9,'<>%-]*!")
-          end
-        }
-      }
     },
 
     snippets = {
@@ -35,7 +28,7 @@ return {
         auto_show = true,
         auto_show_delay_ms = 200,
       },
-      ghost_text = { enabled = true },
+      ghost_text = { enabled = false },
     },
 
     appearance = {

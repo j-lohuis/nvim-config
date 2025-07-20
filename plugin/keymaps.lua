@@ -26,6 +26,16 @@ vim.keymap.set('n', '<M-Left>', ':cp<CR>', { desc = 'Previous Quickfix' })
 -- Exit terminal mode easier
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+-- Navigation in wrapped lines
+vim.keymap.set('n', 'j', function()
+  return (vim.v.count > 4) and "m'" .. vim.v.count .. 'j' or 'gj'
+end, { expr = true, noremap = true })
+
+vim.keymap.set('n', 'k', function()
+  return (vim.v.count > 4) and "m'" .. vim.v.count .. 'k' or 'gk'
+end, { expr = true, noremap = true })
+
+
 -- Split navigation
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })

@@ -73,7 +73,7 @@ return {
       return nil
     end
 
-    local rust_analyzer = { checkOnSave = { command = "clippy" } }
+    local rust_analyzer = { checkOnSave = true }
     local servers = {
       clangd = {
         -- Prefer system clangd, fallback to Mason
