@@ -48,7 +48,7 @@ return {
           })
         end
 
-        if client and client.supports_method('textDocument/inlayHint') then
+        if client and client:supports_method('textDocument/inlayHint') then
           map('<leader>th', function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }, { bufnr = event.buf })
           end, '[T]oggle Inlay [H]ints')
@@ -73,7 +73,17 @@ return {
       return nil
     end
 
-    local rust_analyzer = { checkOnSave = true }
+    local rust_analyzer = {
+      checkOnSave = true,
+      check = {
+        allTargets = true,
+        command = "clippy",
+        -- extraArgs = {"--all-features"},
+      },
+      cargo = {
+        features = "all",
+      },
+    }
     local servers = {
       clangd = {
         -- Prefer system clangd, fallback to Mason

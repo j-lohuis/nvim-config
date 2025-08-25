@@ -33,10 +33,10 @@ return {
           treesitter = false, -- Disable treesitter in preview for performance
         },
 
-        -- Use safe file previewer
-        file_previewer = require('telescope.previewers').vim_buffer_cat.new,
-        grep_previewer = require('telescope.previewers').vim_buffer_vimgrep.new,
-        qflist_previewer = require('telescope.previewers').vim_buffer_qflist.new,
+        -- Use modern previewers
+        file_previewer = require('telescope.previewers').cat.new,
+        grep_previewer = require('telescope.previewers').vimgrep.new,
+        qflist_previewer = require('telescope.previewers').qflist.new,
 
         -- Performance optimizations and safety
         file_ignore_patterns = {
