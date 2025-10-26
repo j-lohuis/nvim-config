@@ -1,4 +1,4 @@
-setlocal makeprg=cargo\ b
+setlocal makeprg=cargo\ build
 " Copied from built-in compiler/{rustc,cargo}.vim
 setlocal errorformat=
 			\%f:%l:%c:\ %t%*[^:]:\ %m,

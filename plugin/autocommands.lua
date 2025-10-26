@@ -20,3 +20,10 @@ vim.api.nvim_create_user_command('MakeGS', function(tbl)
   vim.cmd('mksession ' .. session_path)
   print('Session saved as: ' .. session_path)
 end, { nargs=1 })
+
+vim.api.nvim_create_user_command('DelGS', function(tbl)
+  local session_path = vim.fn.stdpath('data') .. '/session/' .. tbl.fargs[1] .. '.vim'
+  print(session_path)
+  vim.cmd(': !rm ' .. session_path)
+  print('Session deleted: ' .. session_path)
+end, { nargs=1 })
