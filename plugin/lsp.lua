@@ -62,10 +62,13 @@ require('mason').setup()
 require('mason-lspconfig').setup()
 
 vim.lsp.enable('rust_analyzer');
+vim.lsp.enable('clangd');
 
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('lsp-attach', { clear = true }),
   callback = function(event)
+    vim.lsp.inline_completion.enable(true)
+
     local map = function(keys, func, desc)
       vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
     end
@@ -91,6 +94,16 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('<leader>ws', lsp_pick('document_symbol'), '[W]orkspace [S]ymbols')
     map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+
+    vim.keymap.set("i", "<c-i>", function()
+      if not vim.lsp.inline_completion.get() then
+        return "<c-i>"
+      end
+    end, {
+      expr = true,
+      replace_keycodes = true,
+      desc = "Get the current inline completion",
+    })
 
   end,
 })

@@ -28,6 +28,7 @@ vim.keymap.set('n', '<leader>sg', MiniPick.builtin.grep_live, { desc = '[S]earch
 vim.keymap.set('n', '<leader>sd', MiniExtra.pickers.diagnostic, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', MiniPick.builtin.resume, { desc = '[S]earch [R]esume' })
 vim.keymap.set('n', '<leader><leader>', MiniPick.builtin.buffers, { desc = '[ ] Find existing buffers' })
+vim.keymap.set('n', '<leader>/', MiniExtra.pickers.buf_lines, { desc = '[/] Find in buffer' })
 
 vim.api.nvim_set_hl(0, 'MiniPickMatchCurrent', {
   bg = '#555555',

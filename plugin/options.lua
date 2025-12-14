@@ -32,3 +32,7 @@ vim.opt.scrolloff = 10
 vim.opt.wrap = false
 
 vim.opt.diffopt:append { 'filler,algorithm:minimal,linematch:100,iwhiteall' }
+
+vim.wo.foldmethod = 'expr'
+vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.opt.foldlevelstart = 99
