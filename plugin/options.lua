@@ -35,4 +35,5 @@ vim.opt.diffopt:append { 'filler,algorithm:minimal,linematch:100,iwhiteall' }
 
 vim.wo.foldmethod = 'expr'
 vim.wo.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
 vim.opt.foldlevelstart = 99

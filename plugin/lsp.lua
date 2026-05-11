@@ -95,14 +95,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
-    vim.keymap.set("i", "<c-i>", function()
+    vim.keymap.set({'i', 's'}, '<c-i>', function()
       if not vim.lsp.inline_completion.get() then
-        return "<c-i>"
+        return '<c-i>'
       end
     end, {
       expr = true,
       replace_keycodes = true,
-      desc = "Get the current inline completion",
+      desc = 'Get the current inline completion',
     })
 
   end,
