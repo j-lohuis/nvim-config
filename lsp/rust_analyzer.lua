@@ -15,7 +15,6 @@ local default = {
         command = "clippy",
       },
       cargo = {
-        targetDir = "target/ra",
         allTargets = true,
         features = "all",
       },
