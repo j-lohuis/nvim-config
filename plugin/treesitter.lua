@@ -68,6 +68,13 @@ require('nvim-treesitter').install({
 
 require('treesitter-context').setup { enable = true, max_lines = 5 }
 
+vim.keymap.set('n', '<leader>a', function()
+  require('nvim-treesitter-textobjects.swap').swap_next('@parameter.inner')
+end, { desc = 'Swap parameter with next' })
+vim.keymap.set('n', '<leader>A', function()
+  require('nvim-treesitter-textobjects.swap').swap_previous('@parameter.inner')
+end, { desc = 'Swap parameter with previous' })
+
 local pre_installed_parsers = {
   "c",
   "lua",

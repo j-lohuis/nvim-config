@@ -92,9 +92,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
 
     map('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
     -- map('gd', lsp_pick('definition'), '[G]oto [D]efinition')
-    map('gr', lsp_pick('references'), '[G]oto [R]eferences')
-    map('<leader>ds', lsp_pick('document_symbol'), '[D]ocument [S]ymbols')
-    map('<leader>ws', lsp_pick('document_symbol'), '[W]orkspace [S]ymbols')
+    map('grr', lsp_pick('references'), '[G]oto [R]eferences')
+    map('gO', lsp_pick('document_symbol'), 'Document Symbols')
+    map('gW', lsp_pick('workspace_symbol'), '[W]orkspace Symbols')
     map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
 
