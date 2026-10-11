@@ -15,8 +15,6 @@ require('mini.surround').setup({
   }
 })
 require('mini.statusline').setup()
-require('mini.sessions').setup()
-require('mini.starter').setup()
 require('mini.pick').setup()
 require('mini.extra').setup()
 
