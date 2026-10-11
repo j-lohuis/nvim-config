@@ -4,8 +4,11 @@ vim.pack.add({
   'https://github.com/williamboman/mason-lspconfig.nvim',
   'https://github.com/j-hui/fidget.nvim',
   'https://github.com/j-lohuis/lsplocal.nvim',
+  'https://github.com/folke/neoconf.nvim',
   { src = 'https://github.com/saghen/blink.cmp', version = vim.version.range('1.*') },
 })
+
+require('neoconf').setup()
 
 require('blink.cmp').setup({
   keymap = {
