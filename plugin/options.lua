@@ -18,7 +18,7 @@ vim.opt.splitbelow = true
 
 -- Whitespace and listchars
 vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣', eol = '\\u21b5' }
+vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 vim.opt.inccommand = 'split'
 vim.opt.cursorline = true

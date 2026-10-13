@@ -12,6 +12,7 @@ vim.keymap.set('n', '<leader>q', 'Q', { desc = 'Toggle multicursor at cursor' })
 vim.keymap.set({ 'n', 'x' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', '<leader>w', ":w<CR>")
 vim.keymap.set('x', '<leader>p', [["_dP]])
+vim.cmd.packadd('nvim.undotree')
 vim.keymap.set('n', '<leader>u', vim.cmd.Undotree, { desc = 'Toggle [U]ndotree' })
 
 vim.keymap.set('n', '<leader>y', '\"+y')
